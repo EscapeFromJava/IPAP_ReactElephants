@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.reactelephants.HelloController">
+   <children>
+      <TextField fx:id="textFieldName" layoutX="86.0" layoutY="40.0" />
+      <Label layoutX="35.0" layoutY="44.0" text="Name" />
+      <TextField fx:id="textFieldAge" layoutX="86.0" layoutY="77.0" />
+      <Label layoutX="35.0" layoutY="81.0" text="Age" />
+      <TextField fx:id="textFieldWeight" layoutX="86.0" layoutY="113.0" />
+      <Label layoutX="35.0" layoutY="117.0" text="Weight" />
+      <Label layoutX="124.0" layoutY="14.0" text="New Elephant" />
+      <Button fx:id="btnAddElephant" layoutX="117.0" layoutY="154.0" mnemonicParsing="false" onAction="#onButtonAddElephantClick" text="Add Elephatn" />
+      <Label fx:id="lblNumberOfElephant" layoutX="35.0" layoutY="223.0" text="Number of Elephant: " />
+      <VBox fx:id="vBoxList" alignment="TOP_CENTER" layoutX="300.0" layoutY="2.0" prefHeight="400.0" prefWidth="700.0" spacing="10.0" AnchorPane.bottomAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="30.0" />
+   </children>
+</AnchorPane>
