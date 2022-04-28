@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 
 public class HelloController {
@@ -47,10 +48,13 @@ public class HelloController {
 
                         TextField textFieldWeight = new TextField();
                         textFieldWeight.setText(String.valueOf(currentElephant.getWeight()));
-                        textFieldWeight.textProperty().addListener((observableValue, s, t1) -> {
+                        textFieldName.textProperty().bindBidirectional(currentElephant.nameProperty());
+                        //ToDo : attention
+                        /*textFieldWeight.textProperty().addListener((observableValue, s, t1) -> {
                             currentElephant.setWeight(Double.parseDouble(t1));
                             lblPrintElephant.setText(currentElephant.toString());
-                        });
+                        });*/
+                        textFieldWeight.textProperty().bindBidirectional(currentElephant.weightProperty(), new DecimalFormat());
 
                         Button btnIncAge = new Button("Age++");
                         Button btnDeleteElephant = new Button("DEL");
@@ -88,11 +92,11 @@ public class HelloController {
     }
 
     public void initTable() {
-        tblElephants.setEditable(true);
 
         TableColumn<Elephant, String> colName = new TableColumn("Name");
         TableColumn<Elephant, Double> colWeight = new TableColumn("Weight");
         TableColumn<Elephant, Integer> colAge = new TableColumn("Age");
+
         tblElephants.getColumns().clear();
         tblElephants.getColumns().addAll(colName, colWeight, colAge);
         tblElephants.setItems(observableListElephants);
@@ -101,6 +105,7 @@ public class HelloController {
         colWeight.setCellValueFactory(new PropertyValueFactory<Elephant, Double>("weight"));
         colAge.setCellValueFactory(new PropertyValueFactory<Elephant, Integer>("age"));
 
+        tblElephants.setEditable(true);
         colName.setCellFactory(TextFieldTableCell.forTableColumn());
         colWeight.setCellFactory((TextFieldTableCell.forTableColumn(new DoubleStringConverter())));
 
@@ -171,7 +176,6 @@ public class HelloController {
         observableListElephants.add(newElephant);
         createNewElephant();
     }
-
 }
 
 
