@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class Elephant {
     SimpleStringProperty name = new SimpleStringProperty();
-    SimpleIntegerProperty age = new SimpleIntegerProperty();
     SimpleDoubleProperty weight = new SimpleDoubleProperty();
+    SimpleIntegerProperty age = new SimpleIntegerProperty();
 
     public String getName() {
         return name.get();
@@ -55,14 +55,9 @@ public class Elephant {
         setWeight(weight);
     }
 
-    @Override
-    public String toString() {
-        return "Elephant{" + getName() + ", " + getAge() + ", " + getWeight() + "}";
-    }
-
     private static String getRandomName() {
         ArrayList<String> listNames = new ArrayList<String>(Arrays.asList(
-                "Harry", "Oliver", "Jack", "Charlie", "Thomas ", "Jacob", "Alfie ", "Riley", "William", "James"));
+                "Harry", "Oliver", "Jack", "Charlie", "Thomas", "Jacob", "Alfie", "Riley", "William", "James"));
         return listNames.get(new Random().nextInt(listNames.size()));
     }
 
@@ -74,8 +69,12 @@ public class Elephant {
         return Math.round(new Random().nextDouble(300));
     }
 
-
     public static Elephant initializeRandomElephant() {
-        return new Elephant(getRandomName(),getRandomAge(),getRandomWeight());
+        return new Elephant(getRandomName(), getRandomAge(), getRandomWeight());
+    }
+
+    @Override
+    public String toString() {
+        return "Elephant{" + getName() + ", " + getAge() + ", " + getWeight() + "}";
     }
 }

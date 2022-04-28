@@ -3,19 +3,17 @@ package com.example.reactelephants;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
+import javafx.util.Callback;
+import javafx.util.converter.DoubleStringConverter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Random;
 
 public class HelloController {
     @FXML
@@ -23,23 +21,22 @@ public class HelloController {
     @FXML
     Label lblNumberOfElephant;
     @FXML
+    TableView<Elephant> tblElephants;
+    @FXML
     TextField textFieldName, textFieldAge, textFieldWeight;
     @FXML
     VBox vBoxList;
     HashMap<Elephant, HBox> herdControls = new HashMap<>();
-    ObservableList<Elephant> observListElephants = FXCollections.observableArrayList();
+    ObservableList<Elephant> observableListElephants = FXCollections.observableArrayList();
 
     public void initialize() {
-        createNewElephan();
-
-
-        observListElephants.addListener((ListChangeListener<Elephant>) change -> {
-            lblNumberOfElephant.setText("Number of Elephant: " + observListElephants.size());
+        createNewElephant();
+        observableListElephants.addListener((ListChangeListener<Elephant>) change -> {
+            lblNumberOfElephant.setText("Number of Elephant: " + observableListElephants.size());
             while (change.next()) {
                 if (change.wasAdded()) {
                     for (Elephant currentElephant : change.getAddedSubList()) {
                         Label lblPrintElephant = new Label(currentElephant.toString());
-
 
                         TextField textFieldName = new TextField();
                         textFieldName.setText(currentElephant.getName());
@@ -56,7 +53,6 @@ public class HelloController {
                         });
 
                         Button btnIncAge = new Button("Age++");
-
                         Button btnDeleteElephant = new Button("DEL");
 
                         HBox HBoxForNewElephant = new HBox();
@@ -73,12 +69,11 @@ public class HelloController {
                         });
 
 
-
                         vBoxList.getChildren().add(HBoxForNewElephant);
 
                         herdControls.put(currentElephant, HBoxForNewElephant);
 
-                        btnDeleteElephant.setOnAction(actionEvent -> observListElephants.remove(currentElephant));
+                        btnDeleteElephant.setOnAction(actionEvent -> observableListElephants.remove(currentElephant));
                     }
                 }
                 if (change.wasRemoved()) {
@@ -89,20 +84,92 @@ public class HelloController {
                 }
             }
         });
+        initTable();
     }
 
-    private void createNewElephan() {
+    public void initTable() {
+        tblElephants.setEditable(true);
+
+        TableColumn<Elephant, String> colName = new TableColumn("Name");
+        TableColumn<Elephant, Double> colWeight = new TableColumn("Weight");
+        TableColumn<Elephant, Integer> colAge = new TableColumn("Age");
+        tblElephants.getColumns().clear();
+        tblElephants.getColumns().addAll(colName, colWeight, colAge);
+        tblElephants.setItems(observableListElephants);
+
+        colName.setCellValueFactory(el -> el.getValue().nameProperty());
+        colWeight.setCellValueFactory(new PropertyValueFactory<Elephant, Double>("weight"));
+        colAge.setCellValueFactory(new PropertyValueFactory<Elephant, Integer>("age"));
+
+        colName.setCellFactory(TextFieldTableCell.forTableColumn());
+        colWeight.setCellFactory((TextFieldTableCell.forTableColumn(new DoubleStringConverter())));
+
+        TableColumn<Elephant, Void> colButtonAge = new TableColumn<>("Button 'Age'");
+        tblElephants.getColumns().add(colButtonAge);
+        colButtonAge.setCellFactory(new Callback<TableColumn<Elephant, Void>, TableCell<Elephant, Void>>() {
+            @Override
+            public TableCell<Elephant, Void> call(final TableColumn<Elephant, Void> param) {
+                final TableCell<Elephant, Void> cell = new TableCell<Elephant, Void>() {
+                    private final Button btn = new Button("+ age");
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            Elephant el = getTableView().getItems().get(getIndex());
+                            el.setAge(el.getAge() + 1);
+                        });
+                    }
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+
+        TableColumn<Elephant, Void> colButtonDelete = new TableColumn<>("Button 'Delete'");
+        tblElephants.getColumns().add(colButtonDelete);
+        colButtonDelete.setCellFactory(new Callback<TableColumn<Elephant, Void>, TableCell<Elephant, Void>>() {
+            @Override
+            public TableCell<Elephant, Void> call(final TableColumn<Elephant, Void> param) {
+                final TableCell<Elephant, Void> cell = new TableCell<Elephant, Void>() {
+                    private final Button btn = new Button("Delete");
+                    {
+                        btn.setOnAction((ActionEvent event) -> {
+                            Elephant el = getTableView().getItems().get(getIndex());
+                            observableListElephants.remove(el);
+                        });
+                    }
+                    @Override
+                    public void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(btn);
+                        }
+                    }
+                };
+                return cell;
+            }
+        });
+    }
+
+    public void createNewElephant() {
         Elephant el = Elephant.initializeRandomElephant();
         textFieldName.setText(el.getName());
         textFieldAge.setText(String.valueOf(el.getAge()));
         textFieldWeight.setText(String.valueOf(el.getWeight()));
     }
 
-
     public void onButtonAddElephantClick() {
         Elephant newElephant = new Elephant(textFieldName.getText(), Integer.parseInt(textFieldAge.getText()), Double.parseDouble(textFieldWeight.getText()));
-        observListElephants.add(newElephant);
-        createNewElephan();
+        observableListElephants.add(newElephant);
+        createNewElephant();
     }
 
 }
